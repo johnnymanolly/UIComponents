@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+  <head>
+    
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" type="image/x-icon" href="https://www.scriptr.io/themes/scriptr/images/favicon.ico">
+    <title>List</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+    <!-- font awesome.css -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link href="//fonts.googleapis.com/css?family=Josefin+Sans|Montserrat" rel="stylesheet">
+    
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="//cdn.rawgit.com/gdi2290/angular-websocket/v1.0.9/angular-websocket.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-cookies.js"></script>
+    <script src="/UIComponents/wsProvider.js"></script>
+    <script src="/UIComponents/httpProvider.js"></script>
+    <script src="/UIComponents/config/scriptrTransport.js"></script>
+    
+    <link rel="stylesheet" href="/UIComponents/dashboard/frontend/components/searchBox/abn_tree.css">
+    <script src="/UIComponents/dashboard/frontend/components/searchBox/abn_tree_directive.js"></script>
+    
+    <script src="/UIComponents/dashboard/frontend/components/searchBox/searchBox.js"></script>
+  </head>
+  <script>
+     	var myApp = angular.module('myApp', ["WsClient", "HttpClient", "SearchBox"]);
+  		angular.module('myApp').config(wssConfig);
+   		angular.module('myApp').config(httpsConfig);
+    
+        myApp.controller('testCtrl', function($scope) {
+          var vm = this;
+          vm.my_tree = {};
+          vm.callback = function(data){
+            console.log("data formatter");
+            return data;
+          }
+        vm.onSelect = function(branch){
+          console.log("on select");
+        }
+        });
+  </script>
+  <button ng-click="vm.my_tree.select_first_branch()" class="btn btn-default btn-sm">First Branch</button>
+  <button ng-click="vm.my_tree.select_next_sibling()" class="btn btn-default btn-sm">Next Sibling</button>
+  <button ng-click="vm.my_tree.select_prev_sibling()" class="btn btn-default btn-sm">Prev Sibling</button>
+  <button ng-click="vm.my_tree.select_next_branch()" class="btn btn-default btn-sm">Next Branch</button>
+  <button ng-click="vm.my_tree.select_prev_branch()" class="btn btn-default btn-sm">Prev Branch</button>
+  <button ng-click="vm.my_tree.select_parent_branch()" class="btn btn-default btn-sm">Parent</button>
+  <button ng-click="vm.my_tree.expand_branch()" class="btn btn-default btn-sm">Expand</button>
+  <button ng-click="vm.my_tree.collapse_branch()" class="btn btn-default btn-sm">Collapse</button>
+  <button ng-click="vm.my_tree.expand_all()" class="btn btn-default btn-sm">Expand All</button>
+  <button ng-click="vm.my_tree.collapse_all()" class="btn btn-default btn-sm">Collapse All</button>
+  
+  <body ng-controller="testCtrl as vm">
+    <scriptr-searchbox
+                     api='UIComponents/dashboard/frontend/examples/searchBox/getFile'
+                     transport='https'  3
+                     search-text="Filter by name"
+                     initial-selection = "speed"
+                     tree-control="vm.my_tree"  
+                     api-params='{"id" : "45645612"}'  
+                     on-select="vm.onSelect"
+                     icon-expand       = "fa expand-collapse fa-caret-right"
+                     icon-collapse     = "fa expand-collapse fa-caret-down"
+    </scriptr-searchbox>
+  </body>
+</html>
