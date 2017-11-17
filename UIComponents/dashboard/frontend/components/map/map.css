@@ -1,0 +1,122 @@
+/*** colors and generic styles ***/
+.text-white {color: #fff;}
+.text-lighter-white {color: #cbd3d9;}
+.bg-grey {background-color: #f2f4f8;color: #788288;}
+.bg-dark {background: #3e627d;}
+.fnt20 {font-size: 20px; line-height: 1.2em;}	
+.fnt16 {font-size: 16px; line-height: 1.6em;}	
+.page-inner {background: #f1f4f9;}
+.side-bar {background: #1b1e24;}
+.alert-danger {background: #fef2f2;}
+.alert-success {background: #def2d6;}
+.alert-info {background: #ceefff;}
+.alert-warning {background: #fdffce;}
+.bg-green {background: #81c784;}
+.bg-blue {background: #64b5f6;}
+.bg-orange {background: #ff8c00;}
+.bg-yellow {background: #ffd54f;}
+.bg-white {background: #fff;}
+.bg-white-light {background: #f4f4f4;}
+.bg-light {background: #eee;}
+.bg-active {background: #29c778;}
+.bg-inactive {background: #f35958;}
+.box-shadow {box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05), 0 1px 0 rgba(0, 0, 0, 0.05);}
+.border {border: 1px solid #eee;}
+:focus, .bootstrap-select .dropdown-toggle:focus {outline:0!important;}
+.alert {border: none;}
+
+.p0 {padding:0;}
+.pdt10 {padding-top: 10px;}
+.pdl10 {padding-left: 10px;}
+.mb10 {margin-bottom: 10px;}
+.mb5 {margin-bottom: 5px;}
+.mt15 {margin-top: 15px;}
+
+.mb0 {margin-bottom: 0!important;}
+.pdl0 {padding-left: 0;}
+.pdr0 {padding-right: 0;}
+.pdb10 {padding-bottom: 10px;}
+.pdr10 {padding-right: 10px;}
+iframe {width: 100%; height: 100%;}
+.padder10 {padding: 10px;}
+.pdb5 {padding-bottom: 5px;}
+.radius0 {border-radius: 0!important;}
+.full-width {width: 100%!important;}
+.telecom-icon {margin: 0 auto;}
+.telecom-icon svg {fill: #fff;}
+
+.m0 {margin: 0!important;}
+
+/*** summary icons ***/
+.icon {float: left; width: 55px; height: 40px; margin-right: 10px; padding: 5px; border-radius: 3px; margin-top: 3px;}
+.icon svg {fill: white;}
+.icon-lg {min-height: 64px;}
+
+
+/** map wrap ***/
+.map-wrap {height: 90%;width: 97%;position: absolute;}
+
+/*** modal ***/
+.modal-content {border-radius: 0;}
+.modal-body {overflow-y: auto;}
+.index-summary .icon {margin: 0 auto 4px auto; float: none;}
+.index-summary .fnt20 {font-size: 16px;}
+
+ng-map {
+  width:100%; 
+  height:100%;
+  /**position: absolute;**/
+}
+
+/** drawing map buttons **/
+.drawingmanager-buttons {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    width: 100%;
+    top: 33px;
+}
+
+.drawingmanager-buttons span {
+    width: 100%;
+    height: 14px;
+    text-align: center;
+    margin: 0 auto;
+    display: inline-block;
+}
+  
+.drawingmanager-buttons span a {
+    background: white;
+    padding: 6px;
+    border: 1px solid #ddd;
+    color: #888;
+  	cursor: pointer;
+  	margin: 0 -2px;
+}
+
+.drawingmanager-buttons span a:hover {
+ 	background: #ddd; 
+}
+
+.messages {
+   	position: absolute;
+    bottom: 0;
+    left: 30%;
+    width: 500px;
+  	text-align: center;
+  	z-index: 2000;
+}
+
+.heatmap {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: rgba(0,0,0,0.6);
+    padding: 10px;
+}
+.heatmap h5{color: #fff; font-weight: bold;}
+
+.messages .alert {
+  margin: 0;
+}
+
