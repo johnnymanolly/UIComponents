@@ -1,0 +1,154 @@
+<html ng-app="myApp">
+<head>
+    
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="//use.fontawesome.com/3d61d6959e.js"></script>
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>	
+   
+    <!-- Adding Angular -->
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    
+    <!-- Charts used in historical angular.morris -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.css">
+    <link rel="stylesheet" href="/UIComponents/dashboard/frontend/components/chart/chart.css">
+  
+    <script src="//cdnjs.cloudflare.com/ajax/libs/morris.js/0.5.1/morris.min.js"></script>
+    <!--script src="//cdnjs.cloudflare.com/ajax/libs/angular-morris/1.3.0/angular-morris.min.js"></script-->
+    <script src="/UIComponents/dashboard/frontend/components/chart/angular.morris.js"></script>
+  
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-cookies.js"></script>
+    <script src="//cdn.rawgit.com/gdi2290/angular-websocket/v1.0.9/angular-websocket.min.js"></script>
+    <script src="/UIComponents/wsProvider.js"></script>
+    <script src="/UIComponents/httpProvider.js"></script>
+    <script src="/UIComponents/dashboard/frontend/components/chart/chart.js"></script>
+  
+    <script src="/UIComponents/config/scriptrTransport.js"></script>
+</head> 
+  
+<script>
+    var myApp= angular.module("myApp", ["WsClient", "HttpClient", "Chart"])
+    angular.module('myApp').config(wssConfig);
+  	angular.module('myApp').config(httpsConfig);
+  
+    angular.module('myApp').controller('testCtrl', function($scope) {
+          var vm = this;
+          vm.callback = function(data){
+            console.log("data formatter");
+            return data;
+          }
+          
+          vm.testDonutFormatter = function (y, data) {
+            return '$' +(2*y) 
+          };
+      
+      	  vm.hoverCallback =function(index, options, content){
+   			var row = options.data[index]
+            month = 'Y: ' + row.y
+           	line1 = 'A: ' + row.a
+           	line2 = 'B: ' + row.b
+           	return [month, line1, line2].join('<br/>')
+           }
+          
+          vm.dateFormat = function(x) {
+          	 return new Date(x).toTimeString()
+          }
+          
+          vm.xlabelFormat = function(x) {
+            return x.toString(); 
+          }
+          
+          vm.yLabelFormat = function(y) {
+            return y.toString() + 'km';
+          }
+          
+      });
+  
+</script>
+
+<body>  
+  <div ng-controller="testCtrl as vm" >
+    <!-- On initial load do not show data, when msg received over channel with msg-tag = chart, show data -->
+    <div class="col-xs-12 col-sm-6 mb10"> 
+      <div class="box-shadow bg-white">
+      <scriptr-chart
+          type='donut'
+          transport="wss"
+                     background-color="#eee"
+                     colors='["#cfc","#ddd", "#fcd"]'
+                     label-color="#abcdef"
+                     donut-formatter="vm.testDonutFormatter"
+          labels='["line A"]'
+          msg-tag="donut"         
+      </scriptr-chart>  
+      </div>
+    </div>
+
+    <!-- On initial load do not show data, when msg received over channel with msg-tag = chart, show data -->
+    <div class="col-xs-12 col-sm-6 mb10"> 
+      <div class="box-shadow bg-white">
+      <scriptr-chart
+          type="area"     
+          ykeys='["a", "b"]'
+          xkey='y'
+          labels='["Serie A", "Serie B"]'    
+          transport="https"
+          msg-tag="chart"
+          xlabel-angle="45"
+          colors='["#cfc"]'
+          point-size="2"   
+          line-width="20"
+          goals="[1.0, -1.0]"
+          api='UIComponents/dashboard/frontend/examples/chart/getChartData'
+          hover-callback="vm.hoverCallback"
+          on-format-data="vm.callback">          
+      </scriptr-chart>  
+      </div>
+    </div>
+
+     <!-- Initial data loaded statically than wait for messages published over channel with tag chart -->
+    <div class="col-xs-12 col-sm-6 mb10"> 
+      <div class="box-shadow bg-white">
+     <scriptr-chart
+          type='line'
+          transport="wss"
+          msg-tag="chartline"
+          ykeys='["a", "b"]'
+          xkey='y'
+          labels='["Serie A", "Serie B"]'   
+          date-format="vm.dateFormat"
+          line-width="20"
+          colors='["#FCC717", "#E90088"]'
+          data='[ { y: "2006", a: 100, b: 90 },
+                  { y: "2007", a: 75,  b: 65 },
+                  { y: "2008", a: 50,  b: 40 },
+                  { y: "2009", a: 75,  b: 65 },
+                  { y: "2010", a: 50,  b: 40 },
+                  { y: "2011", a: 75,  b: 65 },
+                  { y: "2012", a: 100, b: 90 }]'
+      </scriptr-chart>
+      </div>
+    </div>
+
+    <!-- On intial load use the wss call api method to load data from defined api, than wait for messages published over channel with tag chart -->
+    <div class="col-xs-12 col-sm-6 mb10"> 
+      <div class="box-shadow bg-white">
+        <scriptr-chart
+          type='bar'
+          stacked='true'
+          xkey='y'
+          ykeys='["a", "b"]'
+          labels='["Serie A", "Serie B"]'   
+          transport="wss"
+          msg-tag="chart"
+          api='UIComponents/dashboard/frontend/examples/chart/getChartData'
+      </scriptr-chart>
+      </div>
+    </div>
+  </div>  
+
+</body>  
+   
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML>
+<html ng-app="myApp">
+  <head>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous">
+    <!-- font awesome.css -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <link href="//fonts.googleapis.com/css?family=Josefin+Sans|Montserrat" rel="stylesheet">
+    <!-- Adding Angular -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="//cdn.rawgit.com/gdi2290/angular-websocket/v1.0.9/angular-websocket.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-cookies.js"></script>
+    <script src="/UIComponents/wsProvider.js"></script>
+    
+    <link href="/UIComponents/dashboard/frontend/components/list/angucomplete.alt.css" rel="stylesheet">
+    <script src="/UIComponents/dashboard/frontend/components/list/angucomplete.alt.js"></script>
+    <script src="/UIComponents/dashboard/frontend/components/list/autocomplete.js"></script>
+    <script src="/UIComponents/config/scriptrTransport.js"></script>
+    <script src="/UIComponents/httpProvider.js"></script>
+  </head>
+  <script>
+    
+    	var underscore = angular.module('underscore', []);
+     	underscore.factory('_', ['$window', function($window) {		
+          	return $window._; // assumes underscore has already been loaded on the page		
+      	}]);
+    
+     	var myApp = angular.module('myApp', ["WsClient", "HttpClient", "List"]);
+  		angular.module('myApp').config(wssConfig);
+   		angular.module('myApp').config(httpsConfig);
+    
+        myApp.controller('testCtrl', function($scope) {
+          var vm = this;
+          vm.users = ["user","admin"];  
+          vm.callback = function(data){
+            console.log("data formatter");
+            return data;
+          }
+          vm.onSelect = function(data){
+            console.log("object selected");
+          }
+        });
+  </script>
+  
+  <body ng-controller="testCtrl as vm">
+    <scriptr-autocomplete
+          id="devicesList"                
+          placeholder="Search countries"
+          pause="400"
+          search-fields="user"
+          selected-object="vm.onSelect"
+          title-field="user"
+          objects="vm.users"                
+          clear-selected="true"                
+          description-field="description"                
+          image-field="pic"
+          list-selected-object="true"                
+          minlength="0"
+          text-no-results="No results"                
+          text-searching="Searching..."
+          transport="https"
+          on-format-data="vm.callback"
+          api="UIComponents/dashboard/frontend/examples/list/getDevices"
+          input-class="form-control form-control-small">
+    </scriptr-autocomplete>
+  </body>
+</html>
