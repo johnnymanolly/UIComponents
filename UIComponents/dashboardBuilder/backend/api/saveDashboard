@@ -1,0 +1,113 @@
+var _ = require("/modules/underscore/underscore.js")._;
+
+var documents = require("document");
+
+var log = require("log")
+log.setLevel("INFO");
+
+var params = request.body;
+log.info(params["content"]);
+
+var publishResponse = function(channel, data, request, id) {
+   var message = {"result": data};
+   if(request.body && request.body.id) {
+     message["id"] = request.body.id;
+   } else {
+     //Add a default id to identify the message published over the socket
+      message["id"] = id;
+   }
+   publish(channel, message);
+}
+
+var data = {};
+var script_name = params["scriptName"];//"output/testTemplate_" + Math.floor((Math.random() * 100) + 1) + ".html";
+var previous_script_name = params["previousScriptName"];
+
+if(previous_script_name && previous_script_name != script_name) {
+   data["apsdb.name"] = previous_script_name;
+   data["apsdb.newName"] = script_name;
+} else {
+  data["apsdb.name"] = script_name;
+}
+
+
+
+if(params["update"]) {
+  data["apsdb.update"] = params["update"]
+} 
+
+//This is needed as a workaround for the match regex
+var a = "/*#*SCRIPTR_PLUGIN*#*";
+var b = "*#*";
+var c= "#*/";
+
+data["apsdb.content"] = JSON.stringify({
+    "ACL": {
+            "execute":"anonymous",
+            "read":"anonymous",
+            "write":"nobody"
+    },
+    "userConfig": a + JSON.stringify({"metadata":{"name":"DashboardBuilder","plugindata": params["pluginData"]}}) + b + c,
+    "contentType":"text/html",
+    "content": params["content"]
+});
+
+
+var response = apsdb.callApi("SaveFile", data, null);
+if(response.metadata.status == "failure") {
+   return response.metadata;
+} else {
+  
+  var fields = {};
+  var name = script_name;
+  if(script_name.indexOf("/") != -1){
+     var array = script_name.split("/");
+     name = array[array.length - 1];
+  }
+  fields["formType"] = "customDashboards";
+  fields["path"] = script_name;
+  fields["label"] = name;
+  
+  fields["meta.types"] = {
+        "counter": "numeric"
+  }
+  if(params["update"]){ // update the document
+    var path = previous_script_name;
+ 	var queryParams = {};
+    var queryString = 'formType = "customDashboards" and path ="' + previous_script_name + '"';
+    queryParams["fields"] =  "*";
+    queryParams["query"] =  queryString;
+
+    var queryResults = documents.query(queryParams);
+    if(queryResults.metadata.status == "failure") {
+      return {status : "failure", errorDetails : "an error has occured when quering customDashboards doc ", errorMsg: queryResults};
+    } else{
+      fields["key"] = queryResults.result.documents[0].key
+    }
+  }
+  var saveFieldsResult = documents.save(fields);
+  if(saveFieldsResult.metadata.status == "failure") {
+     return saveFieldsResult.metadata;
+  } else {
+    var queryParams = {};
+    var queryString = 'formType = "customDashboards"';
+
+    queryParams["fields"] =  "*";
+    queryParams["query"] =  queryString;
+
+    var results;
+    results = documents.query(queryParams);
+    if(results.metadata.status == "failure") {
+         return {status : "failure", errorDetails : "an error has occured when quering customDashboards doc ", errorMsg: results};
+    }
+	publishResponse("responseChannel", results.result, request, "homeCustomDashboard");
+
+    response.result = "success"
+    return response.result;
+
+  }
+}
+
+
+
+
