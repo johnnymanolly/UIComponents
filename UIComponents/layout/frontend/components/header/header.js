@@ -8,6 +8,8 @@ angular
 	               headerItems : '<headerItems',
                    class : "@",
                    user: '<?',
+                   logoRoute: "@",
+                   loggedIn: "<?",
                    onHeaderItemClick : "&"
                },
                templateUrl : '/UIComponents/layout/frontend/components/header/header.html',
@@ -19,8 +21,10 @@ angular
                        
                        }
                        this.logout = (this.headerItems && this.headerItems.logout) ?   this.headerItems.logout : null;
+                       this.login = (this.headerItems && this.headerItems.login) ?   this.headerItems.login : null;
                        this.appname =  (this.headerItems && this.headerItems.appname) ?  this.headerItems.appname : "";
                        this.logo = (this.headerItems && this.headerItems.logo) ?  this.headerItems.logo : defaultLogo;
+                       this.logoWidth = (this.headerItems && this.headerItems.logoWidth) ?  this.headerItems.logoWidth : "100%";
                        this.user = (this.user) ? this.user : null;
                        this.items = (this.headerItems && this.headerItems.items) ?  this.headerItems.items : null;
                        this.subitems = (this.headerItems && this.headerItems.subitems) ?  this.headerItems.subitems : null;
@@ -53,9 +57,31 @@ angular
                            }
                        }
                  }
+                   
+                   this.inGroup = function(roles){
+                       var groups = self.user.groups;
+                       if (self.user.groups == null) {
+                           groups = [];
+                       } else if (typeof self.user.groups == 'string') {
+                           groups = [ self.user.groups ];
+                       }
+                       var inRole = false;
+                       if(roles){
+                           for(var i = 0; i < roles.length; i++){
+                               if(groups.indexOf(roles[i]) > -1){
+                                   inRole = true;
+                                   break
+                               }
+                           } 
+                       }else{
+                           inRole = true;
+                       }
+                       return inRole;
+                   }
+                    
                    $scope.$on('$routeChangeStart', function(angularEvent, next, current) { 
                          console.log("next", next);
-                         if(next.$$route) {
+                         if(next && next.$$route && next.$$route.originalPath != "") {
                             console.log("current", next.$$route);
                          	this.currentRoute =  "#"+next.$$route.originalPath;
                             var list = document.getElementsByTagName("a");
