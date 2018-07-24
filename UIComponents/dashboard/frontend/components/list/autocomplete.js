@@ -93,6 +93,8 @@ angular
             "localSearch": "&",	//A function that search local data. It should take a input string and an array of items as arguments and returns an array of matched items. 
 
             "transport" : "@",
+            
+            "filterName": "@",
 
             "msgTag" : "@",
 
@@ -117,6 +119,8 @@ angular
                 this.fieldRequired = (typeof this.fieldRequired != 'undefined') ? this.fieldRequired : false;
                 this.textSearching = (typeof this.textSearching != 'undefined') ? this.textSearching : false;
 
+           //     this.filterName = (this.filterName) ? this.filterName : "Filter";
+                
                 this.transport = (this.transport) ? this.transport : "wss";
                 
                 this.showLoading = (typeof this.showLoading != 'undefined') ? this.showLoading : '';

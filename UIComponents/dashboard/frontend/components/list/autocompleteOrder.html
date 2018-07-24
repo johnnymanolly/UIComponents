@@ -2,7 +2,7 @@
 <div ng-if="$ctrl.listSelectedObject">
     <div class="{{$ctrl.setClass}}">
         <div ng-show="$ctrl.showList" class="input-group" style="width: {{$ctrl.setWidth}}px; margin-left: {{$ctrl.mrgl}}px">
-            <div class="input-group-addon">Filter</div>
+            <div class="input-group-addon">{{$ctrl.filterName}}</div>
             <angucomplete-alt 
                               ng-click="$ctrl.onSelectItem()"
                               id="{{$ctrl.id}}"
@@ -47,7 +47,7 @@
     <div ng-show="$ctrl.showList" class="col-sm-6" style="margin-left: {{$ctrl.mrg}}px">
         <span ng-hide="$ctrl.hideObjects" class="script-wrap"  ng-if="$ctrl.listSelectedObject" ng-repeat="obj in $ctrl.objects track by $index">
             <span style="position: relative;">
-                <span class="script-text" uib-tooltip="{{obj[$ctrl.titleField]}}" tooltip-placement="top"><i class="mr5 text-primary {{obj.icon}}"></i> {{obj[$ctrl.titleField]}}</span>
+                <span class="script-text" uib-tooltip="{{obj['name']}}" tooltip-placement="top"><i class="mr5 text-primary {{obj.icon}}"></i> {{obj['name']}}</span>
                 <span class="script-text" uib-tooltip="{{obj['category']}}" tooltip-placement="top"><i class="mr5 text-primary"></i>{{obj.category}}</span>
                 <span class="script-text">{{obj.price}} €</span>
                 <span ng-click="$ctrl.onSelectItem()"><a ng-if="obj[$ctrl.titleField] != 'nobody'" href="javascript:void(0);" ng-click="$ctrl.addObjectToList(obj)" uib-tooltip="Remove" tooltip-placement="right"><i class="fa fa-close"></i></a></span>
@@ -68,48 +68,45 @@
 </div>
 
 <div ng-if="!$ctrl.listSelectedObject" style="width: 100%;">
-    <div class="row">
-        <div class="{{$ctrl.setClass}}">
-            <div ng-show="$ctrl.showList" class="input-group">
-                <div class="input-group-addon">Filter</div>
-                <angucomplete-alt 
-                                  id="{{$ctrl.id}}"
-                                  placeholder="{{$ctrl.placeholder}}"
-                                  default-set-object="$ctrl.defaultSetObject"
-                                  pause="{{$ctrl.pause}}"
-                                  hide-objects="$ctrl.hideObjects"
-                                  list-selected-object="$ctrl.listSelectedObject"
-                                  objects="$ctrl.objects"
-                                  selected-object="$ctrl.selectedObject"
-                                  local-data="$ctrl.localData"
-                                  image-field="{{$ctrl.imageField}}"
-                                  search-fields="{{$ctrl.searchFields}}"
-                                  title-field="{{$ctrl.titleField}}"
-                                  description-field="{{$ctrl.descriptionField}}"
-                                  image-field="{{$ctrl.imageField}}"
-                                  minlength="{{$ctrl.minlength}}"
-                                  input-class="{{$ctrl.inputClass}}"
-                                  match-class="{{$ctrl.matchClass}}"
-                                  maxlength= "{{$ctrl.maxlength}}"	
-                                  selected-object-data= "$ctrl.selectedObjectData"	
-                                  input-name= "{{$ctrl.inputName}}"
-                                  clear-selected= "{{$ctrl.clearSelected}}"
-                                  override-suggestions= "{{$ctrl.overrideSuggestions}}"	
-                                  field-required= "$ctrl.fieldRequired"
-                                  field-required-class= "{{$ctrl.fieldRequiredClass}}"	
-                                  initial-value= "$ctrl.initialValue"	
-                                  input-changed= "$ctrl.inputChanged"
-                                  auto-match= "$ctrl.autoMatch"
-                                  focus-in= "$ctrl.focusIn"	
-                                  focus-out= "$ctrl.focusOut"	
-                                  disable-input= "$ctrl.disableInput"	
-                                  focus-first= "$ctrl.focusFirst"	
-                                  field-tabindex= "{{$ctrl.fieldTabindex}}"
-                                  text-searching= "{{$ctrl.textSearching}}"	
-                                  text-no-results= "{{$ctrl.textNoResults}}"
-                                  />
-            </div>
-        </div>
+    <div ng-show="$ctrl.showList" class="input-group">
+        <div ng-if="$ctrl.filterName" class="input-group-addon">{{$ctrl.filterName}}</div>
+        <angucomplete-alt 
+                          id="{{$ctrl.id}}"
+                          placeholder="{{$ctrl.placeholder}}"
+                          default-set-object="$ctrl.defaultSetObject"
+                          pause="{{$ctrl.pause}}"
+                          hide-objects="$ctrl.hideObjects"
+                          list-selected-object="$ctrl.listSelectedObject"
+                          objects="$ctrl.objects"
+                          selected-object="$ctrl.selectedObject"
+                          local-data="$ctrl.localData"
+                          image-field="{{$ctrl.imageField}}"
+                          search-fields="{{$ctrl.searchFields}}"
+                          title-field="{{$ctrl.titleField}}"
+                          description-field="{{$ctrl.descriptionField}}"
+                          image-field="{{$ctrl.imageField}}"
+                          minlength="{{$ctrl.minlength}}"
+                          input-class="{{$ctrl.inputClass}}"
+                          match-class="{{$ctrl.matchClass}}"
+                          maxlength= "{{$ctrl.maxlength}}"	
+                          selected-object-data= "$ctrl.selectedObjectData"	
+                          input-name= "{{$ctrl.inputName}}"
+                          clear-selected= "{{$ctrl.clearSelected}}"
+                          override-suggestions= "{{$ctrl.overrideSuggestions}}"	
+                          field-required= "$ctrl.fieldRequired"
+                          field-required-class= "{{$ctrl.fieldRequiredClass}}"	
+                          initial-value= "$ctrl.initialValue"	
+                          input-changed= "$ctrl.inputChanged"
+                          auto-match= "$ctrl.autoMatch"
+                          focus-in= "$ctrl.focusIn"	
+                          focus-out= "$ctrl.focusOut"	
+                          disable-input= "$ctrl.disableInput"	
+                          focus-first= "$ctrl.focusFirst"	
+                          field-tabindex= "{{$ctrl.fieldTabindex}}"
+                          text-searching= "{{$ctrl.textSearching}}"	
+                          text-no-results= "{{$ctrl.textNoResults}}"
+                          />
+
     </div>
 </div>
 

@@ -9,8 +9,18 @@ angular
         bindings : {
 
             "onLoad" : "&onLoad",
+            
+            "deleteLabel": "@",
+            
+            "addLabel": "@",
 
             "columnsDefinition" : "<columnsDefinition",
+            
+            "cellEditorParams": "<?",
+            
+            "cellEditor": "@",
+            
+            "rowHeight": "<?",
 
             "enableServerSideSorting" : "<?", // Note that Client side sorting & filtering does not make sense in virtual paging and is just not supported, only Server side sorting & filtering is supported
 
@@ -94,7 +104,7 @@ angular
         },
 
         templateUrl : '/UIComponents/dashboard/frontend/components/grid/grid.html',
-        controller : function($scope, $window, $uibModal, $timeout, wsClient, dataService) {
+        controller : function($scope, $window, $uibModal, $timeout, wsClient, gridService) {
 
             var self = this;
 
@@ -129,7 +139,7 @@ angular
                         }
                     }
                     self.gridOptions.api.showLoadingOverlay();
-                    dataService.getGridData(api, APIParams, transport, tmp).then(
+                    gridService.getGridData(api, APIParams, transport, tmp).then(
                         function(data, response) {
                             if (data && data.documents) {
                                 self.gridOptions.api.hideOverlay();  
@@ -200,6 +210,11 @@ angular
             this.$onInit = function() {
                 this.gridOptions = {
                     angularCompileRows: true,
+                    rowHeight : (this.rowHeight) ? this.rowHeight : 25,
+                    deleteLabel : (this.deleteLabel) ? this.deleteLabel : "",
+                    addLabel : (this.addLabel) ? this.addLabel : "",
+                    cellEditorParams: (this.cellEditorParams) ? this.cellEditorParams : null,   
+                    cellEditor: (this.cellEditor) ? this.cellEditor : null,
                     enableSorting: (typeof this.enableClientSideSorting != 'undefined')? this.enableClientSideSorting : true,
                     enableServerSideSorting : (typeof this.enableServerSideSorting != 'undefined')? this.enableServerSideSorting : true,
                     enableServerSideFilter : (typeof this.enableServerSideFilter != 'undefined') ? this.enableServerSideFilter : true,
@@ -256,12 +271,22 @@ angular
                         $timeout(function() {
                             self.gridOptions.api = event.api;
                             self.gridApi = event.api;  
-                        }, 3000)  
+                            if(typeof self.rowData == 'undefined' || self.rowData == null || (self.rowData && self.rowData.length ==0)){
+                                if(self.api){
+                                    self._createNewDatasource();
+                                }else{
+                                    event.api.setRowData([]);
+                                }
+                            }else{
+                                event.api.sizeColumnsToFit();
+                            }
+                        }, 1000)  
                         if(typeof self.onGridReady() == "function"){
                             self.onGridReady()(self);
                         }
                         // set "Contains" in the column drop down filter to "StartWith" as it is not supported in document query 
                         event.api.filterManager.availableFilters.text.CONTAINS = "startsWith";
+                        /*
                         if(typeof self.rowData == 'undefined' || self.rowData == null || (self.rowData && self.rowData.length ==0)){
                             if(self.api){
                                 self._createNewDatasource();
@@ -271,6 +296,7 @@ angular
                         }else{
                             event.api.sizeColumnsToFit();
                         }
+                        */
                         // set a numeric filter model for each numerical column
                         if(this.columnsDefinition){
                             for(var i = 0; i < this.columnsDefinition.length; i++){
@@ -292,7 +318,7 @@ angular
                 this.style = {};   
                 if(this.fixedHeight){
                     this.gridHeight = (this.gridHeight) ? this.gridHeight : "500";
-                    this.style["height"] = this.gridHeight+"px";
+                    this.style["height"] = this.gridHeight;
                     this.style["clear"] = "left";
                     this.style["width"] = "100%";
                 }else{
@@ -304,7 +330,7 @@ angular
                 this.mode =  (this.gridOptions.rowModelType == 'infinite') ? "infinite" : "normal";
 
                 if(self.msgTag){
-                    dataService.subscribe(this.onServerCall, self.msgTag, $scope);
+                    gridService.subscribe(this.onServerCall, self.msgTag, $scope);
                 }
 
                 $scope.$on("updateGridData", function(event, broadcastData) {
@@ -338,7 +364,7 @@ angular
                             params[key] = this.editParams[key]
                         }
                     }  
-                    dataService.gridHelper(self.api, params).then(
+                    gridService.gridHelper(self.api, params).then(
                         function(data, response) {
                             self.gridOptions.api.hideOverlay();  
                             if (data && data.result == "success" || data.status == "success") {
@@ -365,7 +391,7 @@ angular
                             params[key] = this.addParams[key]
                         }
                     }   
-                    dataService.gridHelper(self.api, event.data).then(
+                    gridService.gridHelper(self.api, event.data).then(
                         function(data, response) {
                             self.gridOptions.api.hideOverlay();   
                             if (data && data.result == "success" || data.status == "success") {
@@ -435,7 +461,7 @@ angular
                                     params[key] = this.deleteParams[key]
                                 }
                             }  
-                            dataService.gridHelper(self.api, params).then(
+                            gridService.gridHelper(self.api, params).then(
                                 function(data, response) {
                                     self.gridOptions.api.hideOverlay();     
                                     if (data && data.result == "success" || data.status == "success") {
@@ -579,7 +605,7 @@ angular
 
 angular
     .module('Grid')
-    .service("dataService", function(httpClient, wsClient, $q) {
+    .service("gridService", function(httpClient, wsClient, $q) {
 
     this.subscribe = function(callback, tag, $scope){
         wsClient.onReady.then(function() {
