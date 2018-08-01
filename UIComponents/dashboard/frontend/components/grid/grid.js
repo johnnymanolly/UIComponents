@@ -8,18 +8,24 @@ angular
     {
         bindings : {
 
+            "user": "<?",
+            
+            "enableImport": "<?",
+
+            "admin" : "@",
+
             "onLoad" : "&onLoad",
-            
+
             "deleteLabel": "@",
-            
+
             "addLabel": "@",
 
             "columnsDefinition" : "<columnsDefinition",
-            
+
             "cellEditorParams": "<?",
-            
+
             "cellEditor": "@",
-            
+
             "rowHeight": "<?",
 
             "enableServerSideSorting" : "<?", // Note that Client side sorting & filtering does not make sense in virtual paging and is just not supported, only Server side sorting & filtering is supported
@@ -97,6 +103,8 @@ angular
             "msgTag" : "@",
 
             "class" : "@",
+            
+            "allowToEdit": "<?",
 
             "defaultCellRenderer": "&",  
 
@@ -104,7 +112,7 @@ angular
         },
 
         templateUrl : '/UIComponents/dashboard/frontend/components/grid/grid.html',
-        controller : function($scope, $window, $uibModal, $timeout, wsClient, gridService) {
+        controller : function($scope, $window, $uibModal, $timeout, wsClient, httpClient, gridService, $q) {
 
             var self = this;
 
@@ -120,6 +128,7 @@ angular
                                 }
                         if(self.broadcastData.params != null){
                             self.apiParams = self.broadcastData.params
+                            self.broadcastData.params = null;
                         }
                         if(self.broadcastData.transport != null){
                             var transport = self.broadcastData.transport
@@ -137,6 +146,9 @@ angular
                         tmp = function(data){ 
                             return self.onFormatData()(data); // Or we can have it as self.onFormatData({"data":data}) and pass it in the on-format-update as: vm.callback(data)
                         }
+                    }
+                    if(self.user){
+                        APIParams["userGroup"] = self.user.groups;
                     }
                     self.gridOptions.api.showLoadingOverlay();
                     gridService.getGridData(api, APIParams, transport, tmp).then(
@@ -251,7 +263,7 @@ angular
                         //    self.oldEditedValue = event.oldValue;
                         //    self.editedColumn = event.colDef.field;
                         //    self.editedChildIndex = event.node.childIndex || event.node.id;
-                        if(self.cellEditable){ 
+                        if(self.allowToEdit){
                             if(self.onCellValueChanged != null && typeof self.onCellValueChanged() == "function"){
                                 self.onCellValueChanged()(self.gridOptions);
                             }
@@ -313,7 +325,10 @@ angular
                     }
 
                 };
-                this.serverFilterLabel = (this.serverFilterLabel) ? this.serverFilterLabel : "Server filter";
+                this.allowToEdit = (typeof this.allowToEdit != 'undefined') ?  this.allowToEdit : false,
+                this.user = (this.user) ?  this.user : "",
+                    this.admin = (this.admin) ?  this.admin : "",
+                    this.serverFilterLabel = (this.serverFilterLabel) ? this.serverFilterLabel : "Server filter";
                 this.fixedHeight = (typeof this.fixedHeight != 'undefined') ? this.fixedHeight : true;   
                 this.style = {};   
                 if(this.fixedHeight){
@@ -326,6 +341,25 @@ angular
                 }   
                 this.transport = (this.transport) ? this.transport : "wss";
                 this.enableDeleteRow =  (this.enableDeleteRow == true) ? false : true;
+                this.showImport = false;
+                if(self.user){
+                    var groups = self.user.groups;
+                    if(typeof groups == "string"){
+                        if(groups != self.admin){
+                            this.enableDeleteRow = true;
+                        }else{
+                            this.showImport = true;
+                        }
+                    }
+                    else{
+                        if(!_.contains(groups, self.admin)){
+                            this.enableDeleteRow = true;
+                        } else{
+                            this.showImport = true;
+                        }
+                    }
+
+                }
                 this.enableAddRow =  (this.enableAddRow == true) ? false : true;
                 this.mode =  (this.gridOptions.rowModelType == 'infinite') ? "infinite" : "normal";
 
@@ -356,20 +390,24 @@ angular
             }
 
             this._saveData = function(event){
-                var params = event.data;  
+                var rows = event.data;  
                 if(event.data && event.data.key){
-                    params.action = "edit";
+                    //        params.action = "edit";
                     if(this.editParams){
                         for(var key in this.editParams){
-                            params[key] = this.editParams[key]
+                            rows[key] = this.editParams[key]
                         }
                     }  
-                    gridService.gridHelper(self.api, params).then(
+                    if(self.user){
+                        rows["user"] = self.user.login;
+                    }
+                    var params = {rows: rows, action: "edit"};
+                    gridService.gridHelper(self.api, params, "https").then(
                         function(data, response) {
                             self.gridOptions.api.hideOverlay();  
                             if (data && data.result == "success" || data.status == "success") {
                                 //       self.showAlert("success", "Row(s) updated successfuly");
-                                self.onServerCall(data);
+                                self.onServerCall();
                             } else {
                                 self.undoChanges();
                                 if(data && data.errorDetail){
@@ -385,18 +423,22 @@ angular
                             self.showAlert("danger", "An error has occured");
                         });
                 }else{
-                    params.action = "add";
+                    //      params.action = "add";
                     if(this.addParams){
                         for(var key in this.addParams){
-                            params[key] = this.addParams[key]
+                            rows[key] = this.addParams[key]
                         }
                     }   
-                    gridService.gridHelper(self.api, event.data).then(
+                    if(self.user){
+                        rows["user"] = self.user.login;
+                    }
+                    var params = {rows: event.data, action: "add"};
+                    gridService.gridHelper(self.api, params, "https").then(
                         function(data, response) {
                             self.gridOptions.api.hideOverlay();   
                             if (data && data.result == "success" || data.status == "success") {
                                 //	  self.showAlert("success", "Row(s) Added successfuly");
-                                self.onServerCall(data);
+                                self.onServerCall();
 
                             } else {
                                 self.undoChanges();
@@ -461,12 +503,12 @@ angular
                                     params[key] = this.deleteParams[key]
                                 }
                             }  
-                            gridService.gridHelper(self.api, params).then(
+                            gridService.gridHelper(self.api, params, "wss").then(
                                 function(data, response) {
                                     self.gridOptions.api.hideOverlay();     
                                     if (data && data.result == "success" || data.status == "success") {
                                         //     self.showAlert("success", "Row(s) deleted successfuly");
-                                        self.onServerCall(data);
+                                        self.onServerCall();
                                     } else {
                                         if(data && data.errorDetail){
                                             self.showAlert("danger", data.errorDetail);
@@ -490,7 +532,7 @@ angular
                 }
             }
 
-            this.onServerCall = function(data){
+            this.onServerCall = function(){
                 if(!self.gridOptions.api) self.gridOptions.api = self.gridApi;
                 self.gridOptions.api.refreshInfiniteCache();
             }
@@ -549,6 +591,7 @@ angular
 
             this.buildParams = function(params) {
                 var queryFilter = self.serverFilterText;
+              //  var criteria = self.serverFilterText;
                 var columnName = null;
                 var type = null;
                 var pageNumber = params.endRow / this.gridOptions.paginationPageSize;
@@ -587,18 +630,222 @@ angular
                 if (queryFilter) {
                     APIParams["queryFilter"] = queryFilter;
                 }
+                /*
+                if(criteria){
+                    APIParams["criteria"] = criteria;
+                }
+                */
                 if (queryType) {
                     APIParams["queryType"] = queryType;
                 }
                 APIParams["startRow"] = params.startRow;
                 APIParams["endRow"] = params.endRow;
-                if(this.apiParams){
+                if(self.apiParams){
                     for(var param in this.apiParams){
-                        APIParams[param] = this.apiParams[param];
+                        APIParams[param] = self.apiParams[param];
                     }
                 }
+                self.apiParams = null;
                 return APIParams;
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // XMLHttpRequest in promise format
+            function makeRequest(method, url, success, error) {
+                var httpRequest = new XMLHttpRequest();
+                httpRequest.open("GET", url, true);
+                httpRequest.responseType = "arraybuffer";
+
+                httpRequest.open(method, url);
+                httpRequest.onload = function () {
+                    success(httpRequest.response);
+                };
+                httpRequest.onerror = function () {
+                    error(httpRequest.response);
+                };
+                httpRequest.send();
+            }
+
+            // read the raw data and convert it to a XLSX workbook
+            function convertDataToWorkbook(data) {
+                /* convert data to binary string */
+                var data = new Uint8Array(data);
+                var arr = new Array();
+
+                for (var i = 0; i !== data.length; ++i) {
+                    arr[i] = String.fromCharCode(data[i]);
+                }
+
+                var bstr = arr.join("");
+
+                return XLSX.read(bstr, {type: "binary"});
+            }
+
+            // pull out the values we're after, converting it into an array of rowData
+
+            function populateGrid(workbook) {
+
+                for(var x = 0; x < workbook.SheetNames.length; x++){
+                    // our data is in the first sheet
+                    var sheetName = workbook.SheetNames[x];
+                    var worksheet = workbook.Sheets[sheetName];
+
+                    // we expect the following columns to be present
+                    var columns = {
+                        'A': workbook.Sheets[workbook.SheetNames[x]].A1.v,
+                        'B': workbook.Sheets[workbook.SheetNames[x]].B1.v,
+                        'C': workbook.Sheets[workbook.SheetNames[x]].C1.v,
+                        'D': workbook.Sheets[workbook.SheetNames[x]].D1.v,
+                        'E': workbook.Sheets[workbook.SheetNames[x]].E1.v,
+                        'F': workbook.Sheets[workbook.SheetNames[x]].F1.v,
+                        'G': workbook.Sheets[workbook.SheetNames[x]].G1.v,
+                        'H': workbook.Sheets[workbook.SheetNames[x]].H1.v,
+                        'I': workbook.Sheets[workbook.SheetNames[x]].I1.v,
+                        'J': workbook.Sheets[workbook.SheetNames[x]].J1.v,
+                        'K': workbook.Sheets[workbook.SheetNames[x]].K1.v,
+                        'L': workbook.Sheets[workbook.SheetNames[x]].L1.v,
+                        'M': workbook.Sheets[workbook.SheetNames[x]].M1.v,
+                        'N': workbook.Sheets[workbook.SheetNames[x]].N1.v
+                    };
+
+                    var rowData = [];
+
+                    // start at the 2nd row - the first row are the headers
+                    var rowIndex = 2;
+
+                    // iterate over the worksheet pulling out the columns we're expecting
+                    while (worksheet['A' + rowIndex]) {
+                        var row = {};
+                        Object.keys(columns).forEach(function(column) {
+                            row[columns[column]] = worksheet[column + rowIndex].w;
+                        });
+
+                        rowData.push(row);
+
+                        rowIndex++;
+                    }
+                    //    rowData = rowData.slice(0,150);
+                    if(!self.api){
+                        self.gridOptions.api.setRowData(rowData);
+                    }else{
+                        var all_data = [];
+                        var i,j,temparray,chunk = 20;
+                        for (i=0,j=rowData.length; i<j; i+=chunk) {
+                            temparray = rowData.slice(i,i+chunk);
+                            all_data.push(temparray);
+                        }
+                        var index = 0;
+                        callAgain(all_data[index], index, all_data);
+                    } 
+                }
+            }
+
+            function callAgain(rows, index, all_data){
+                saveImport(rows).then(
+                    function(data, response) {
+                        if (data && data.result == "success" || data.status == "success") {
+                            index++;
+                            if(index < all_data.length){
+                                $timeout(function () {
+                                   callAgain(all_data[index], index, all_data);
+                                }, 4000);
+                            }else{
+                                self.gridOptions.api.hideOverlay();   
+                                self.onServerCall(data);
+                            }
+
+                        }
+                    },
+                    function(err) {
+                        self.gridOptions.api.hideOverlay();   
+                        self.showAlert("danger", "An error has occured");
+                    });
+            }
+
+            function saveImport(rowData){
+                self.gridOptions.api.showLoadingOverlay();   
+                var params = {rows: rowData, action: "import"};
+                if(self.user){
+                    params["user"] = self.user.login;
+                }
+                var d = $q.defer(); 
+                httpClient
+                    .post(self.api, params).then(function(data, response){
+                    d.resolve(data, response)
+                }, function(err) {
+                    d.reject(err)
+                });
+                return d.promise;
+                /*                
+                gridService.gridHelper("hycm/api/saveImport", params, "https").then(
+                    function(data, response) {
+                        self.gridOptions.api.hideOverlay();   
+                        if (data && data.result == "success" || data.status == "success") {
+                            //	  self.showAlert("success", "Row(s) Added successfuly");
+                            self.onServerCall(data);
+
+                        } else {
+                            self.undoChanges();
+                            if(data && data.errorDetail){
+                                self.showAlert("danger", data.errorDetail);
+                            }else{
+                                self.showAlert("danger", "An error has occured");
+                            }
+                        }
+                    },
+                    function(err) {
+                        self.gridOptions.api.hideOverlay();   
+                        console.log("reject", err);
+                        self.showAlert("danger", "An error has occured");
+                    });
+
+                    */
+            }
+
+
+
+
+
+
+
+            this.importExcel = function() {
+                makeRequest('GET',
+                            'https://cdn.rawgit.com/johnnymanolly/resources/fbb0f68a/hycm/translations/all.xlsx',
+                            // success
+                            function (data) {
+                    var workbook = convertDataToWorkbook(data);
+
+                    populateGrid(workbook);
+                },
+                            // error
+                            function (error) {
+                    throw error;
+                }
+                           );
+            }
+
+
+
+
+
+
+
+
+
+
+
+
 
         }
     });
@@ -613,15 +860,26 @@ angular
         });
     }
 
-    this.gridHelper = function(api, params){
+    this.gridHelper = function(api, params, transport){
         var d = $q.defer(); 
-        wsClient
-            .call(api, params, "grid").then(function(data, response){
-            d.resolve(data, response)
-        }, function(err) {
-            d.reject(err)
-        });
-        return d.promise;
+        if(transport == "wss"){
+            wsClient
+                .call(api, params, "grid").then(function(data, response){
+                d.resolve(data, response)
+            }, function(err) {
+                d.reject(err)
+            });
+            return d.promise;
+        }else{
+            httpClient
+                .post(api, params).then(function(data, response){
+                d.resolve(data, response)
+            }, function(err) {
+                d.reject(err)
+            });
+            return d.promise;
+        }
+
     }
 
 
