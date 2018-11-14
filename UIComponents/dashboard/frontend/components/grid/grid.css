@@ -62,4 +62,13 @@
     border-color: #e47618;
 }
 
+.btn:focus {
+  outline: none;
+}
+
+.remove-focus:focus {
+  outline: none;
+}
+
+
 
