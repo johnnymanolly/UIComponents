@@ -13,6 +13,7 @@ angular.module('lr.upload.directives').directive('uploadButton', [
       restrict: 'EA',
       scope: {
         data: '=?data',
+        params : '=',   
         url: '@',
         id: '@',
         param: '@',
@@ -41,11 +42,14 @@ angular.module('lr.upload.directives').directive('uploadButton', [
           var fd = new FormData();
           fd.append("upload_file", fileInput[0].files[0]);  
           scope.$apply(function () {
-            scope.onUpload({ files: fd });
+            scope.onUpload({ files: fd }, scope);
           });
             
           upload(options).then(function (response) {
-            scope.onSuccess({ response: response });
+              if(typeof scope.onSuccess() == "function"){
+                scope.onSuccess()({ response: response });
+               }
+            
         //    scope.onComplete({ response: response });
           }, function (response) {
             scope.onError({ response: response });
