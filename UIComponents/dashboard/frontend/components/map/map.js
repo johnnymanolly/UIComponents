@@ -128,6 +128,8 @@ angular
                   }
               }
           });  
+          
+      
       }
       
       this.$onDestroy = function() {
@@ -517,6 +519,17 @@ angular
           self.heatMap.push(heatmap);  
         }
       };
+        
+      self.addMarkerToMapOnclick = function(dynMkr) {
+          
+          var tmp = new google.maps.Marker(dynMkr);
+          self.dynMarkers.push(tmp);
+          var heatmap = {};
+          heatmap.location = dynMkr.position;
+          heatmap.weight = (self.heatMapWeight) ? self.heatMapWeight : 40;
+          self.heatMap.push(heatmap);  
+          
+      }  
 
       //Control the asset markers trip points limits if maxAssetPoints defined, remove first pushed marker when limit reached
       self.controlVehicleTrips = function(key) {

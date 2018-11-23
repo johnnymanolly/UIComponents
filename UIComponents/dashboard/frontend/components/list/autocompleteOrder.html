@@ -1,7 +1,7 @@
-<div class="text-center loading" ng-if="!$ctrl.showList"><i class="fa fa-spinner fa-spin fa-3x"></i></div>
+<!--div class="text-center loading" ng-if="!$ctrl.showList"><i class="fa fa-spinner fa-spin fa-3x"></i></div-->
 <div ng-if="$ctrl.listSelectedObject">
     <div class="{{$ctrl.setClass}}">
-        <div ng-show="$ctrl.showList" class="input-group" style="width: {{$ctrl.setWidth}}px; margin-left: {{$ctrl.mrgl}}px">
+        <div ng-show="true" class="input-group" style="width: {{$ctrl.setWidth}}px; margin-left: {{$ctrl.mrgl}}px">
             <div class="input-group-addon">{{$ctrl.filterName}}</div>
             <angucomplete-alt 
                               ng-click="$ctrl.onSelectItem()"
@@ -68,7 +68,7 @@
 </div>
 
 <div ng-if="!$ctrl.listSelectedObject" style="width: 100%;">
-    <div ng-show="$ctrl.showList" class="input-group">
+    <div ng-show="true" class="input-group set-filter-width">
         <div ng-if="$ctrl.filterName" class="input-group-addon">{{$ctrl.filterName}}</div>
         <angucomplete-alt 
                           id="{{$ctrl.id}}"

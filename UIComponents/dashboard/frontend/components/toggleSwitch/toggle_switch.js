@@ -12,6 +12,8 @@ angular
                    
                   "type" : "@", 
                    
+                   "transport": "@",
+                   
                   "size": "@", 
                    
                   "class" : "@", 

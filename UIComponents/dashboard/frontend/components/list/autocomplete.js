@@ -108,6 +108,8 @@ angular
 
             var self = this;
             self.total = 0;
+            
+            this.newObjects = [];
 
             this.$onInit = function() {
 
@@ -208,15 +210,23 @@ angular
 
             this.consumeData = function(data, response) {
                 self.showList = true;  
+                if(data.selected)
+                {
+                    var selected = data.selected;
+                }
                 if(typeof self.onFormatData() == "function"){
                     data = self.onFormatData()(data);
                 }
+                
                 this.localData = data;  
                 if(this.listSelectedObject && this.objects.length > 0){
                     $scope.$broadcast('angucomplete-alt:setData', self.id, this.localData);
                     $scope.$broadcast('angucomplete-alt:setSelectedObjects', self.id, this.objects);
                     self.onSelectItem();
                 }  
+                if(selected){
+                    $scope.$broadcast('angucomplete-alt:changeInput', self.id, selected);
+                }
             }
         }
     });

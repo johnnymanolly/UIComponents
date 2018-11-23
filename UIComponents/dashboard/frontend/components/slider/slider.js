@@ -78,6 +78,8 @@ angular
                    
                 "transport": "@",   
                    
+                "resizeSlider": "<?",  
+                   
                 "msgTag" : "@",
 
                 "apiParams" : "<?",
@@ -196,8 +198,11 @@ angular
                    }
                    
                    self.resize = function(){
-                       self.timeoutId = null;
-                  		self.style["margin-top"] = ($element.parent().outerHeight(true)/2) - ($element.outerHeight(true)/2);
+                       if(self.resizeSlider){
+                           self.timeoutId = null;
+                           self.style["margin-top"] = ($element.parent().outerHeight(true)/2) - ($element.outerHeight(true)/2);
+                       }
+                       
                  }
                   
                   this.$postLink = function() {

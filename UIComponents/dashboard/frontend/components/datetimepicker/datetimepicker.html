@@ -12,7 +12,11 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <datetimepicker data-ng-model="$ctrl.date" data-on-set-time="onSetTime()" data-datetimepicker-config="$ctrl.configuration"/>
+                    <datetimepicker
+                                    data-ng-model="$ctrl.date"
+                                    data-on-set-time="onSetTime()"
+                                    data-before-render="dropDownInputBeforeRender($view, $dates, $leftDate, $upDate, $rightDate)"
+                                    data-datetimepicker-config="$ctrl.configuration"/>
                 </ul>
             </div>
         </div>

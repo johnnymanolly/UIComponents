@@ -58,7 +58,7 @@
         '      <div class="angucomplete-title" ng-if="matchClass" ng-bind-html="result.title"></div>' +
         '      <div class="angucomplete-title" ng-if="!matchClass">{{ result.title }}</div>' +
         '      <div ng-if="matchClass && result.description && result.description != \'\'" class="angucomplete-description" ng-bind-html="result.description"></div>' +
-        '      <div ng-if="!matchClass && result.description && result.description != \'\'" class="angucomplete-description">{{result.description}}</div>' +
+        '      <div ng-if="!matchClass && result.description && result.description != \'\'" class="angucomplete-description"><b>{{result.description}}</b></div>' +
         '    </div>' +
         '  </div>' +
         '</div>'
@@ -185,6 +185,9 @@
             callOrAssign({originalObject: newval});
           } else if (typeof newval === 'string' && newval.length > 0) {
             scope.searchStr = newval;
+              if (typeof scope.selectedObject === 'function') {
+                  scope.selectedObject(newval, scope);
+              }
           } else {
             if (console && console.error) {
               console.error('Tried to set ' + (!!initial ? 'initial' : '') + ' value of angucomplete to', newval, 'which is an invalid value');
