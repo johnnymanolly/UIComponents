@@ -1,0 +1,41 @@
+<html ng-app="demoApp">
+
+    <head>
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+      
+        <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script> 
+    </head>  
+    
+    <style>
+        /* Switch button */
+        .btn-default.btn-on.active{background-color: #5BB75B;color: white;}
+        .btn-default.btn-off.active{background-color: #DA4F49;color: white;}
+
+    </style>
+
+    <script>
+        var myapp = angular.module('demoApp', []);
+        
+        
+        myapp.controller('exampleCtrl', function ($scope) {
+
+            
+        });
+    </script>
+
+
+<div class="container" style="margin-top:20px;" ng-controller="exampleCtrl">
+	<div class="row">
+        <div class="col-md-5">
+            <div class="btn-group" id="status" data-toggle="buttons">
+              <label class="btn btn-default btn-on active" ng-click="tax_id=true;"><input type="radio" value="yes" checked="checked">YES</label>
+              <label class="btn btn-default btn-off" ng-click="tax_id=false;"><input type="radio" value="no">NO</label>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</html>

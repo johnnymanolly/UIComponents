@@ -36,16 +36,16 @@
     <div ng-controller="testCtrl as vm">
       <scriptr-toggle-switch
                      switch-status="false"
-                     knob-label="TV"
-                     is-disabled="true"
-                     on-label="ON"
-                     off-label="OFF"
+                     knob-label="Publish"
+                     is-disabled="false"
+                     on-label="Yes"
+                     off-label="No"
                      on-switch-change="vm.onChange"
-                     transport="wss"
-                     type="switch-danger"        
+                     transport="https"
+                     type="switch-success"        
                      size="switch-mini"
                      msg-tag="toggle"        
-                     api="UIComponents/dashboard/frontend/examples/toggleSwitch/getToggleSwitchVal"        
+                     api="UIComponents/dashboard/frontend/examples/toggleSwitch/publishToggleSwitchVal"        
                      >
       </scriptr-toggle-switch>
     </div>

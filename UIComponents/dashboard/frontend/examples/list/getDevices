@@ -16,7 +16,7 @@ for(var i = 0; i < devices.length; i++){
     user["user"] = devices[i].id[0]; 
     user["description"] = "user"; 
     user["code"] = devices[i].id[0]; 
-    user["pic"] = imgSrc.userImg;
+  //  user["pic"] = imgSrc.userImg;
     user["icon"] = "fa fa-user";    
     myDevices.push(user);
 }
@@ -28,7 +28,7 @@ for(var y = 0; y < groups.length; y++){
     group["user"] = groups[y].name;
     group["code"] = groups[y].name; 
     group["description"] = "group"; 
-    group["pic"] = imgSrc.groupImg;
+  //  group["pic"] = imgSrc.groupImg;
     group["icon"] = "fa fa-group";   
     myDevices.push(group);
 }
@@ -38,7 +38,7 @@ myDevices.push({
     "description" : "group",
     "code" : "anonymous",
     "icon" : "fa fa-group",
-    "pic" : imgSrc.groupImg
+ //   "pic" : imgSrc.groupImg
 })
 
 myDevices.push({
@@ -46,7 +46,7 @@ myDevices.push({
     "description" : "group",
     "code" : "authenticated",
     "icon" : "fa fa-group",
-    "pic" : imgSrc.groupImg
+  //  "pic" : imgSrc.groupImg
 })
 
 myDevices.push({
@@ -54,7 +54,7 @@ myDevices.push({
     "description" : "group",
     "code" : "scriptr",
     "icon" : "fa fa-group",
-    "pic" : imgSrc.groupImg
+  //  "pic" : imgSrc.groupImg
 })
 
 return myDevices

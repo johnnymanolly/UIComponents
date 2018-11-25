@@ -24,8 +24,8 @@
         <script src="/UIComponents/wsProvider.js"></script>
         <script src="/UIComponents/config/scriptrTransport.js"></script>
 
-        <script src="//cdnjs.cloudflare.com/ajax/libs/ag-grid/12.0.0/ag-grid.js?ignore=notused36"></script>
-        <script src="/UIComponents/dashboard/frontend/components/grid/grid.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/ag-grid/18.0.0/ag-grid.js?ignore=notused36"></script>
+        <script src="/UIComponents/dashboard/frontend/components/grid/grid_new.js"></script>
 
         <link rel="stylesheet" href="/UIComponents/dashboard/frontend/components/grid/grid.css">
     </head>
@@ -40,39 +40,56 @@
             angular.module('myApp').config(httpsConfig); 
             myApp.controller('testCtrl', function($scope) {
                 var vm = this;
-                vm.obj = ["Hundai", "BMW"]
                 vm.cols = [
                     {headerName: "Name", field: "name"},
                     {headerName: "Model", field: "model", cellEditor: "select", cellEditorParams: {  
                         values : vm.obj
                     }},
                     {headerName: "Price", field: "price"}]
-                vm.data = [{
-                    name: "BMW",
-                    model: "300",
-                    price: "20000"
-                }]
+                
+                 vm.defaultCellRenderer = function(params){
+                    if(params.value){
+                        return '<span class="ag-cell-inner" tooltip-placement="auto" uib-tooltip="'+ params.value +'">'+params.value+'</span>'
+                    }else{
+                        return ''
+                    }
+                }
             });
 
         </script>
         <div ng-controller="testCtrl as vm" >
             <scriptr-grid
                           columns-definition='vm.cols'
-                          row-data="vm.data"
+                          api="UIComponents/dashboard/frontend/examples/grid/getCarsInfo"
                           enable-sorting='true'
                           enable-delete-row='true'
-                          boxLabel='Grid'
                           fixed-height='false'
                           enable-add-row='true'
-                          msg-tag='grid'
                           cell-editable='true'
-                          enable-client-side-filter='true'
+
                           enable-server-side-filter='false'
                           enable-server-side-sorting='false'
                           row-model-selection='multiple'
                           pagination-page-size='20'
                           transport='https'
-                          on-format-data='vm.gridFormatData1'
+  
+                          default-cell-renderer="vm.defaultCellRenderer"   
+                          api-params='vm.gridParams'
+                          add-params='vm.addParams'      
+                          grid-height='calc(100vh - 160px)'
+                          on-add-row-click="vm.onAddRowClick"
+                          pagination="true"
+                          enable-col-resize="true"   
+                          suppress-filter='true'
+                          add-label="Add New Address"
+                          delete-label="Delete Address"
+                          row-height='30'
+                          enable-client-side-filter='false'
+                          row-model-type='infinite'
+                          row-model-selection='multiple'
+                          pagination-page-size='20'
+                          on-format-data="vm.onAddressesLoaded"
+                          
                           ></scriptr-grid>
             </body>
         </div>

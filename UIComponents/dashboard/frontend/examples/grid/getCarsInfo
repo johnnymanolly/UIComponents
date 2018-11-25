@@ -20,13 +20,17 @@ var log = require("log");
 log.setLevel("INFO");
 var documents = require("document");
 
-/* create dummy data
+/* create dummy data */
+/*
 for(var i = 1; i <= 100; i++){
   var fields = {};
-  fields["formType"] = "car";
+  fields["formType"] = "cars";
   fields["name"] = "name_"+i;
   fields["model"] = "model_"+i;
-  fields["price"] = "price_"+i;
+  fields["price"] = i;
+  fields["meta.types"] = {
+      "price": "numeric"
+    }
   documents.save(fields);
 }
 return
@@ -105,7 +109,7 @@ if(action){
 }else{
   var queryParams = {};
   if(sortType == null) sortType = "string"
-  var fieldsParams = "name, model, price, formType";
+  var fieldsParams = "name, price, formType";
   var queryString = 'formType = "cars"';
   var sortString = (sortingColumnName && sortingColumnName != "" && sortingColumnName != "undefined") ? sortingColumnName+"<"+sortType+":"+sort+">" : null;
 
