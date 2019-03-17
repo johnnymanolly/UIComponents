@@ -150,8 +150,13 @@
           for(var x = 0; x < objects.length; x++){
               for(var i = 0; i < scope.localData.length; i++){
                   if(scope.localData[i][scope.titleField] == objects[x][scope.titleField]){
-                      removedItems.push(scope.localData[i]);
-                    //  scope.localData.splice(i, 1);
+               //       removedItems.push(scope.localData[i]);
+                      removedItems.push(objects[x]);
+                      if(scope.clearSelected)
+                      {
+                          scope.localData.splice(i, 1);
+                      }
+                      
                       break;
                   }
               }
@@ -173,6 +178,10 @@
             for(var y = 0; y < scope.objects.length; y++){
                 if(scope.objects[y][scope.titleField] == objects[0][scope.titleField]){
                     scope.objects.splice(y, 1);
+                    if(scope.clearSelected)
+                    {
+                        scope.localData.push(objects[0]);
+                    }
                     break;
                 }
             }
@@ -222,9 +231,12 @@
            scope.newObjects.push(value.originalObject);
            // remove the selected object from the list 
            for(var i = 0; i < scope.localData.length; i++){
-               if(scope.localData[i][scope.titleField] == value.originalObject.code){
+               if(scope.localData[i][scope.titleField] == value.originalObject[scope.titleField]){
                    removedItems.push(scope.localData[i]);
-                //   scope.localData.splice(i, 1);
+                   if(scope.clearSelected)
+                   {
+                       scope.localData.splice(i, 1);
+                   }
                    break;
                }
            } 
@@ -891,7 +903,7 @@
         searchFields: '@',
         minlength: '@',
         matchClass: '@',
-        clearSelected: '@',
+        clearSelected: '<?',
         overrideSuggestions: '@',
         fieldRequired: '=',
         fieldRequiredClass: '@',

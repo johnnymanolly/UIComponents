@@ -1,0 +1,7 @@
+<div>
+    <span>{{model.day}}</span>
+    <input type="checkbox" ng-model="model.active"/>
+    <input calendar="{{model.calendar}}" class="{{model.day}}_from" placeholder={{model.from}} ng-model="model.open"/>
+    <input calendar="{{model.calendar}}" class="{{model.day}}_to" placeholder={{model.to}} ng-model="model.close"/>
+    <br>
+</div>

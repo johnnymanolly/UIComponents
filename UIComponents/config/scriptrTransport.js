@@ -1,10 +1,10 @@
 var wssConfig = ["wsClientProvider",function (wsClientProvider) {
-  wsClientProvider.setToken("UEYzNUVERTI0QzpzY3JpcHRyOkQ1MUE2ODI5ODNDNkQxQkFDNTNDNzlGRjZDRDNDNzc3");
+  wsClientProvider.setToken("QzFBQzlGQTQ4MTpzY3JpcHRyOkY3MkEzRkVBRUMwNzE3RUE5RDk4RjM3MkNDOUI3N0Qx");
   wsClientProvider.setPublishChannel("requestChannel");
   wsClientProvider.setSubscribeChannel("responseChannel");
 }];
 
 var httpsConfig = ["httpClientProvider",function (httpClientProvider) {
-  httpClientProvider.setBaseUrl("https://dashboard.scriptrapps.io");
-  httpClientProvider.setToken("UEYzNUVERTI0QzpzY3JpcHRyOkQ1MUE2ODI5ODNDNkQxQkFDNTNDNzlGRjZDRDNDNzc3");
+  httpClientProvider.setBaseUrl("https://estia.scriptrapps.io");
+  httpClientProvider.setToken("QzFBQzlGQTQ4MTpzY3JpcHRyOkY3MkEzRkVBRUMwNzE3RUE5RDk4RjM3MkNDOUI3N0Qx");
 }]

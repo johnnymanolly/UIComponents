@@ -11,6 +11,8 @@ angular
             "user": "<?",
 
             "enableImport": "<?",
+            
+            "scope": "<?",
 
             "onPublish": "&",
             
@@ -340,6 +342,7 @@ angular
                         $timeout(function() {
                             self.gridOptions.api = event.api;
                             self.gridApi = event.api;
+                            self.scope = self.gridApi;
                             if(typeof self.rowData == 'undefined' || self.rowData == null || (self.rowData && self.rowData.length ==0)){
                                 if(self.api){
                                     self._createNewDatasource();
@@ -397,6 +400,7 @@ angular
                     this.style["height"] = "77%";
                 }
                 this.transport = (this.transport) ? this.transport : "wss";
+                
                 this.enableDeleteRow =  (this.enableDeleteRow == true) ? false : true;
                 this.showImport = false;
                 if(self.user){
@@ -435,6 +439,10 @@ angular
                 $scope.$on("updateGridData", function(event, broadcastData) {
                     self.broadcastData = broadcastData;
                     self._createNewDatasource();
+                })
+                
+                $scope.$on("getGridScope", function(event, params) {
+                    return self.gridApi;
                 })
 
                 $scope.$on("onExternalServerFilterChanged", function(event, inputText) {

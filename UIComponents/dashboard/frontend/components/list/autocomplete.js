@@ -15,6 +15,8 @@ angular
             
             "setWidth": "@",
             
+            "scope": "<?",
+            
             "showLoading": "<?",
             
             "setClass": "@",
@@ -61,7 +63,7 @@ angular
 
             "searchFields": "@",	//The fields from your local data to search on (comma separate them). Each field can contain dots for accessing nested attribute.
 
-            "clearSelected": "@",	//To clear out input field upon selecting an item, set this attribute to true. 
+            "clearSelected": "<?",	//To clear out input field upon selecting an item, set this attribute to true. 
 
             "overrideSuggestions": "@",	//To override suggestions and set the value in input field to selectedObject. 
 
@@ -103,7 +105,7 @@ angular
             "onFormatData" : "&"
 
         },
-        templateUrl: "/UIComponents/dashboard/frontend/components/list/autocompleteOrder.html",
+        templateUrl: "/UIComponents/dashboard/frontend/components/list/codesautocomplete.html",
         controller: function($scope,wsClient, httpClient) {
 
             var self = this;
@@ -122,6 +124,8 @@ angular
                 this.textSearching = (typeof this.textSearching != 'undefined') ? this.textSearching : false;
 
            //     this.filterName = (this.filterName) ? this.filterName : "Filter";
+                
+                this.scope = this;
                 
                 this.transport = (this.transport) ? this.transport : "wss";
                 
@@ -142,6 +146,14 @@ angular
                     self.showList = false;
                     initDataService(this.transport);
                 }  
+                
+                 $scope.$on("angucomplete-alt:getItems", function(event, params) {
+                    return this.objects;
+                })
+                 
+                $scope.$on("angucomplete-alt:getScope", function(event, params) {
+                    return event.currentScope.$ctrl.objects;
+                })
             }
 
             self.onSelectItem = function(){
@@ -215,7 +227,7 @@ angular
                     var selected = data.selected;
                 }
                 if(typeof self.onFormatData() == "function"){
-                    data = self.onFormatData()(data);
+                    data = self.onFormatData()(data, self);
                 }
                 
                 this.localData = data;  

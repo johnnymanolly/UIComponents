@@ -1,8 +1,18 @@
 <!--div class="text-center loading" ng-if="!$ctrl.showList"><i class="fa fa-spinner fa-spin fa-3x"></i></div-->
 <div ng-if="$ctrl.listSelectedObject">
-    <div class="{{$ctrl.setClass}}">
+    <div ng-show="$ctrl.showList" class="row" style="margin-left: {{$ctrl.mrg}}px">
+        <span ng-hide="$ctrl.hideObjects" class="script-wrap"  ng-if="$ctrl.listSelectedObject" ng-repeat="obj in $ctrl.objects track by $index">
+            <span style="position: relative;">
+                <span class="script-text" uib-tooltip="{{obj[$ctrl.titleField]}}" tooltip-placement="top"><i class="mr5 text-primary {{obj.icon}}"></i> {{obj[$ctrl.titleField]}}</span>
+                <span class="script-text" uib-tooltip="{{obj[$ctrl.descriptionField]}}" tooltip-placement="top"><i class="mr5 text-primary"></i>{{obj[$ctrl.descriptionField]}}</span>
+                <span ng-click="$ctrl.onSelectItem()"><a ng-if="obj[$ctrl.titleField] != 'nobody'" href="javascript:void(0);" ng-click="$ctrl.addObjectToList(obj)" uib-tooltip="Remove" tooltip-placement="right"><i class="fa fa-close"></i></a></span>
+
+            </span>
+        </span> 
+
+    </div>
+    <div class="row {{$ctrl.setClass}}" style="margin-top: 15px;">
         <div ng-show="true" class="input-group" style="width: {{$ctrl.setWidth}}px; margin-left: {{$ctrl.mrgl}}px">
-            <div class="input-group-addon">{{$ctrl.filterName}}</div>
             <angucomplete-alt 
                               ng-click="$ctrl.onSelectItem()"
                               id="{{$ctrl.id}}"
@@ -44,31 +54,11 @@
                               />
         </div>
     </div>
-    <div ng-show="$ctrl.showList" class="col-sm-6" style="margin-left: {{$ctrl.mrg}}px">
-        <span ng-hide="$ctrl.hideObjects" class="script-wrap"  ng-if="$ctrl.listSelectedObject" ng-repeat="obj in $ctrl.objects track by $index">
-            <span style="position: relative;">
-                <span class="script-text" uib-tooltip="{{obj['name']}}" tooltip-placement="top"><i class="mr5 text-primary {{obj.icon}}"></i> {{obj['name']}}</span>
-                <span class="script-text" uib-tooltip="{{obj['category']}}" tooltip-placement="top"><i class="mr5 text-primary"></i>{{obj.category}}</span>
-                <span class="script-text">{{obj.price}} €</span>
-                <span ng-click="$ctrl.onSelectItem()"><a ng-if="obj[$ctrl.titleField] != 'nobody'" href="javascript:void(0);" ng-click="$ctrl.addObjectToList(obj)" uib-tooltip="Remove" tooltip-placement="right"><i class="fa fa-close"></i></a></span>
-                <span class="script-text" uib-tooltip="{{obj['comments']}}" tooltip-placement="top" onbeforesave="$ctrl.onEditItem(obj, $data)"  uib-tooltip="{{obj.comments}}" tooltip-placement="right" href="#" editable-text="dashboard.path" e-form="textBtnForm">{{obj.comments}}</span>
-                <span class="script-text"><a ng-click="textBtnForm.$show()" ng-hide="textBtnForm.$visible" href="javascript:void(0);" uib-tooltip="Add comments to this item" tooltip-placement="bottom"><i class="fa fa-edit"></i></a></span>
-            </span>
-        </span> 
-        <div class="clearfix"></div>
-        <div ng-show="$ctrl.objects.length">
-            <span class="script-text">Total: {{$ctrl.total}} €</span>
-            </br>
-        <span class="script-text">Total items: {{$ctrl.totalItems}}</span>
-        <div><button ng-hide="$ctrl.orderSent" ng-click="$ctrl.sendOrder($ctrl.objects)" class="processed-by">Send Order</button></div>  
-        <div><button ng-click="$ctrl.print($ctrl.objects)" class="processed-by">Print Order</button></div>  
-        <div ng-if="$ctrl.showMarkAs && $ctrl.objects.length > 0"><button ng-hide="$ctrl.markedAs" ng-click="$ctrl.onMarkAsEvent($ctrl.objects)" class="confirm-order">Mark as Paid</button></div>
-    </div>
-</div>
+
 </div>
 
 <div ng-if="!$ctrl.listSelectedObject" style="width: 100%;">
-    <div ng-show="true" class="input-group set-filter-width">
+    <div ng-show="true" class="input-group" style="width: {{$ctrl.setWidth}}px; margin-left: {{$ctrl.mrgl}}px">
         <div ng-if="$ctrl.filterName" class="input-group-addon">{{$ctrl.filterName}}</div>
         <angucomplete-alt 
                           id="{{$ctrl.id}}"

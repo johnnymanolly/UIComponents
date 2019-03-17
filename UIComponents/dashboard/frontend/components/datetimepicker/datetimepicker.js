@@ -161,7 +161,7 @@ angular
                 var activeDate = moment(new Date()).subtract(1, $view).add(1, 'minute');
 
                 $dates.filter(function (date) {
-                    return date.localDateValue() <= activeDate.valueOf()
+                    return date.localDateValue() >= activeDate.valueOf()
                 }).forEach(function (date) {
                     date.selectable = false;
                 })
